@@ -8,8 +8,11 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,7 +24,7 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author dell
  */
-public class PuntoVenta extends javax.swing.JFrame {
+public class PuntoVenta extends javax.swing.JFrame implements Runnable {
 
     private static Connection con;
     // Declaramos los datos de conexion a la bd
@@ -33,6 +36,7 @@ public class PuntoVenta extends javax.swing.JFrame {
     public LinkedList<Integer> lcantidades = new LinkedList<Integer>();
     public LinkedList<String[]> imprimir = new LinkedList<String[]>();
     double tot;
+    int hour, second, minute;
 
     DefaultTableModel dtm = new DefaultTableModel();
 
@@ -50,13 +54,18 @@ public class PuntoVenta extends javax.swing.JFrame {
         }
         return con;
     }
-
-    public PuntoVenta() throws SQLException {
+    
+    
+    public PuntoVenta() throws SQLException  {
+        
         initComponents();
+        Thread t = new Thread(this);
+        t.start();
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setTitle("Punto de Venta | Equipo 3 ");
         this.getContentPane().setBackground(new java.awt.Color(225, 233, 243));
         mostrarTabla();
+        
 
     }
 
@@ -92,7 +101,7 @@ public class PuntoVenta extends javax.swing.JFrame {
         FileWriter fichero = null;
         PrintWriter pw = null;
         try {
-            fichero = new FileWriter("C:\\Users\\cente\\Desktop\\prueba.txt");
+            fichero = new FileWriter("C:\\Users\\cente\\Desktop\\prueba.pdf");
             pw = new PrintWriter(fichero);
             pw.println("Codigo \t \tProducto \t \tCantidad \t \tPrecio \t \tTotal");
             for (int i = 0; i < this.imprimir.size(); i++) {
@@ -379,4 +388,22 @@ public class PuntoVenta extends javax.swing.JFrame {
     private javax.swing.JTable jTable1;
     private javax.swing.JTextField total;
     // End of variables declaration//GEN-END:variables
+    
+    public void run() {
+        while (true) {
+            Calendar cal = Calendar.getInstance();
+            hour = cal.get(Calendar.HOUR_OF_DAY);
+            minute = cal.get(Calendar.MINUTE);
+            second = cal.get(Calendar.SECOND);
+
+            SimpleDateFormat sdf24 = new SimpleDateFormat("HH:mm:ss");
+            Date dat = cal.getTime();
+            String time24 = sdf24.format(dat);
+
+            TimeIn24.setText("Hora: " + time24);
+
+        }
+    }
+
+
 }
